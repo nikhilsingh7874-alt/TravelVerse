@@ -1,0 +1,23 @@
+[
+    {
+        "ref_no": "TW-5EFC34C0",
+        "pkg_key": "Kerala",
+        "package_name": "Kerala",
+        "destination": "Kerala",
+        "full_name": "nikhil",
+        "email": "nikhilsingh7874@gmail.com",
+        "phone": "2442342355",
+        "adults": 2,
+        "children": 0,
+        "check_in": "2026-07-05",
+        "check_out": "2026-07-11",
+        "nights_booked": 6,
+        "room_type": "Deluxe Room",
+        "meal_plan": "Breakfast Only",
+        "special": "",
+        "total_price": 160000,
+        "booked_by": "admin",
+        "booked_at": "2026-07-01 12:59:36",
+        "status": "confirmed"
+    }
+]

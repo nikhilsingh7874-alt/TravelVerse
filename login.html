@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In / Register — Travel World</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-panel { overflow-y: auto; padding: 48px 64px; }
+    @media (max-width: 900px) { .login-panel { padding: 36px 28px; } }
+    @media (max-height: 700px) { .login-panel { justify-content: flex-start; padding-top: 32px; } }
+  </style>
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- LEFT VISUAL -->
+  <div class="login-visual">
+    <div class="login-visual-content">
+      <h2>The World<br>Awaits You</h2>
+      <p>Discover extraordinary journeys crafted<br>for the curious traveller.</p>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="login-panel">
+    <div class="login-logo">&#9992; Travel<span style="color:var(--text)">World</span></div>
+
+    <!-- Tab switcher -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')"    role="tab">Sign In</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')" role="tab">Create Account</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="auth-panel active" id="panel-login">
+      <h1 style="margin-bottom:6px;">Welcome back</h1>
+      <p class="subtitle">Sign in to access your travel dashboard</p>
+
+      <div id="loginError" class="error-msg" style="display:none"></div>
+
+      <form id="loginForm" action="login.php" method="POST" novalidate>
+        <input type="hidden" name="action" value="login">
+
+        <div class="form-group">
+          <label for="login_username">Username</label>
+          <input type="text" id="login_username" name="username"
+                 placeholder="Enter your username" autocomplete="username">
+          <div class="form-error" id="err_lu">Please enter your username.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="login_password">Password</label>
+          <div style="position:relative;">
+            <input type="password" id="login_password" name="password"
+                   placeholder="Enter your password" autocomplete="current-password"
+                   style="padding-right:44px;">
+            <button type="button" onclick="togglePw('login_password',this)"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;line-height:1;">
+              &#128065;
+            </button>
+          </div>
+          <div class="form-error" id="err_lp">Please enter your password.</div>
+        </div>
+
+        <button type="submit" class="btn-primary"
+                style="width:100%;border-radius:8px;margin-top:8px;padding:14px;">
+          Sign In &rarr;
+        </button>
+      </form>
+
+      <div class="switch-link">
+        New here? <button onclick="switchTab('register')">Create a free account</button>
+      </div>
+
+      <div class="login-hint" style="margin-top:20px;">
+        <p>&#128273; Built-in Accounts</p>
+        <p><strong>admin</strong> / travel123 &nbsp;&middot;&nbsp; <strong>guest</strong> / explore789</p>
+      </div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="auth-panel" id="panel-register">
+      <h1 style="margin-bottom:6px;">Create Account</h1>
+      <p class="subtitle">Join thousands of happy travellers</p>
+
+      <div class="register-success" id="registerSuccess">
+        <div class="icon">&#127881;</div>
+        <h3>Account Created!</h3>
+        <p id="successMsg">You can now sign in with your new credentials.</p>
+        <button onclick="switchTab('login')" class="btn-primary"
+                style="margin-top:16px;border-radius:8px;padding:11px 32px;">
+          Go to Sign In
+        </button>
+      </div>
+
+      <div id="registerError" class="error-msg" style="display:none"></div>
+
+      <form id="registerForm" novalidate>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg_fname">First Name *</label>
+            <input type="text" id="reg_fname" name="first_name" placeholder="Enter your  First name">
+            <div class="form-error" id="err_fn">First name required.</div>
+          </div>
+          <div class="form-group">
+            <label for="reg_lname">Last Name *</label>
+            <input type="text" id="reg_lname" name="last_name" placeholder="Enter your Last name">
+            <div class="form-error" id="err_ln">Last name required.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_email">Email Address *</label>
+          <input type="email" id="reg_email" name="email"
+                 placeholder="you@email.com" autocomplete="email">
+          <div class="form-error" id="err_re">Valid email address required.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_phone">Phone Number</label>
+          <input type="tel" id="reg_phone" name="phone" placeholder=" ">
+        </div>
+
+        <div class="form-group">
+          <label for="reg_username">Username *</label>
+          <input type="text" id="reg_username" name="username"
+                 placeholder="Choose a unique username (min 3 chars)"
+                 autocomplete="username"
+                 oninput="checkUsernameAvail(this.value)">
+          <div class="form-error" id="err_ru">Username required — min 3 chars, letters/numbers/_ only.</div>
+          <div id="username_ok"  style="font-size:0.75rem;color:var(--success);margin-top:4px;display:none;">&#10003; Username available</div>
+          <div id="username_bad" style="font-size:0.75rem;color:var(--danger);margin-top:4px;display:none;"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_password">Password *</label>
+          <div style="position:relative;">
+            <input type="password" id="reg_password" name="password"
+                   placeholder="Min 6 characters" autocomplete="new-password"
+                   oninput="checkStrength(this.value)"
+                   style="padding-right:44px;">
+            <button type="button" onclick="togglePw('reg_password',this)"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;line-height:1;">
+              &#128065;
+            </button>
+          </div>
+          <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwFill"></div></div>
+          <div class="pw-strength-label" id="pwLabel"></div>
+          <div class="form-error" id="err_rp">Password must be at least 6 characters.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_confirm">Confirm Password *</label>
+          <input type="password" id="reg_confirm" name="confirm"
+                 placeholder="Re-enter your password" autocomplete="new-password">
+          <div class="form-error" id="err_rc">Passwords do not match.</div>
+        </div>
+
+        <button type="submit" class="btn-primary"
+                style="width:100%;border-radius:8px;padding:14px;" id="regBtn">
+          Create Account &rarr;
+        </button>
+      </form>
+
+      <div class="switch-link" id="regSwitchLink">
+        Already have an account? <button onclick="switchTab('login')">Sign in here</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ─── Tab switching ─────────────────────────────────────── */
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'   + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  clearErrors();
+}
+
+function clearErrors() {
+  document.querySelectorAll('.form-error').forEach(e => e.style.display = 'none');
+  document.getElementById('loginError').style.display    = 'none';
+  document.getElementById('registerError').style.display = 'none';
+}
+
+/* ─── Open correct tab from URL ─────────────────────────── */
+const params = new URLSearchParams(window.location.search);
+if (params.get('tab') === 'register') switchTab('register');
+
+/* ─── Login error from redirect ─────────────────────────── */
+if (params.get('error') === '1') {
+  const el = document.getElementById('loginError');
+  el.style.display = 'block';
+  el.textContent   = 'Invalid username or password. Please try again.';
+}
+
+/* ─── Show/hide password toggle ─────────────────────────── */
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type  = inp.type === 'password' ? 'text' : 'password';
+  btn.innerHTML = inp.type === 'password' ? '&#128065;' : '&#128584;';
+}
+
+/* ─── Password strength meter ───────────────────────────── */
+function checkStrength(pw) {
+  const fill  = document.getElementById('pwFill');
+  const label = document.getElementById('pwLabel');
+  let score = 0;
+  if (pw.length >= 6)             score++;
+  if (pw.length >= 10)            score++;
+  if (/[A-Z]/.test(pw))          score++;
+  if (/[0-9]/.test(pw))          score++;
+  if (/[^A-Za-z0-9]/.test(pw))   score++;
+  const levels = [
+    { w:'0%',   bg:'transparent', text:'' },
+    { w:'25%',  bg:'#f85149',     text:'Weak' },
+    { w:'50%',  bg:'#e3b341',     text:'Fair' },
+    { w:'75%',  bg:'#58a6ff',     text:'Good' },
+    { w:'100%', bg:'#3fb950',     text:'Strong' },
+  ];
+  const s = Math.min(score, 4);
+  fill.style.width      = levels[s].w;
+  fill.style.background = levels[s].bg;
+  label.textContent     = levels[s].text;
+  label.style.color     = levels[s].bg;
+}
+
+/* ─── Live username availability check ──────────────────── */
+let _timer = null;
+function checkUsernameAvail(val) {
+  const ok  = document.getElementById('username_ok');
+  const bad = document.getElementById('username_bad');
+  ok.style.display = bad.style.display = 'none';
+  clearTimeout(_timer);
+  const clean = val.trim();
+  if (clean.length < 3 || !/^[a-zA-Z0-9_]+$/.test(clean)) return;
+  _timer = setTimeout(() => {
+    fetch('register.php?check_username=' + encodeURIComponent(clean))
+      .then(r => r.json())
+      .then(data => {
+        if (data.available) {
+          ok.style.display  = 'block';
+          bad.style.display = 'none';
+        } else {
+          bad.textContent   = data.message || 'Username not available.';
+          bad.style.display = 'block';
+          ok.style.display  = 'none';
+        }
+      }).catch(() => {});
+  }, 450);
+}
+
+/* ─── Login form JS validation ──────────────────────────── */
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  let valid = true;
+  ['err_lu','err_lp'].forEach(id => document.getElementById(id).style.display = 'none');
+  if (!document.getElementById('login_username').value.trim()) {
+    document.getElementById('err_lu').style.display = 'block'; valid = false;
+  }
+  if (!document.getElementById('login_password').value.trim()) {
+    document.getElementById('err_lp').style.display = 'block'; valid = false;
+  }
+  if (!valid) e.preventDefault();
+});
+
+/* ─── Register form AJAX submit ─────────────────────────── */
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  document.querySelectorAll('#panel-register .form-error').forEach(el => el.style.display = 'none');
+  document.getElementById('registerError').style.display = 'none';
+
+  const fname    = document.getElementById('reg_fname').value.trim();
+  const lname    = document.getElementById('reg_lname').value.trim();
+  const email    = document.getElementById('reg_email').value.trim();
+  const username = document.getElementById('reg_username').value.trim();
+  const password = document.getElementById('reg_password').value;
+  const confirm  = document.getElementById('reg_confirm').value;
+
+  let valid = true;
+  const showErr = id => { document.getElementById(id).style.display = 'block'; valid = false; };
+
+  if (!fname)                                                    showErr('err_fn');
+  if (!lname)                                                    showErr('err_ln');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))    showErr('err_re');
+  if (!username || username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) showErr('err_ru');
+  if (!password || password.length < 6)                         showErr('err_rp');
+  if (password !== confirm)                                      showErr('err_rc');
+  if (!valid) return;
+
+  const btn = document.getElementById('regBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Creating account…';
+
+  try {
+    const body = new URLSearchParams({
+      action: 'register',
+      first_name: fname, last_name: lname,
+      email, phone: document.getElementById('reg_phone').value.trim(),
+      username, password, confirm
+    });
+    const resp = await fetch('register.php', { method:'POST', body });
+    const data = await resp.json();
+
+    if (data.success) {
+      document.getElementById('registerForm').style.display        = 'none';
+      document.getElementById('regSwitchLink').style.display       = 'none';
+      document.getElementById('successMsg').textContent =
+        'Welcome, ' + fname + '! You can now sign in as "' + username + '".';
+      document.getElementById('registerSuccess').style.display = 'block';
+    } else {
+      const errEl = document.getElementById('registerError');
+      errEl.style.display = 'block';
+      errEl.textContent   = data.message || 'Registration failed. Please try again.';
+    }
+  } catch (err) {
+    const errEl = document.getElementById('registerError');
+    errEl.style.display = 'block';
+    errEl.textContent   = 'Network error. Please try again.';
+  }
+
+  btn.disabled    = false;
+  btn.textContent = 'Create Account →';
+});
+</script>
+</body>
+</html>
